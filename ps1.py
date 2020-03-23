@@ -24,61 +24,13 @@ class CharacterBase:
     Level = 1;
     Class = "";
     
-#    """Character base stats"""
-    Armorplating = 0;
-    Aerodynamics = 0;
-    Quantumshield = 0;
-    Criticalchance = 0;
-    Ciriticalmulti = 0;
-    Attackspeed = 0;
-    Hullprotection = 100;
-    Quantumentanglement = 0;
-    Aerodynamics = 0;
-    LifeSteal = 0;
-    CoolDownReduction = 0;
-    ManaCostReduction = 0;
-    Allattributesmod = 0;
-    HullProtectionmod = 0;
-    Quantumentanglementmod = 0;
-    Aerodynamicsmod = 0;
-    Physicallow = 0;
-    Physicalhigh = 0;
-    Electriclow = 0;
-    Electrichigh = 0;
-    Icelow = 0;
-    Icehigh = 0;
-    Heatlow = 0;
-    Heathigh = 0;
-    Radiationlow = 0;
-    Radiationhigh = 0;
-    
-#    """Sanpshot of characters stats"""
-    ArmorplatingSNAP = 0;
-    AerodynamicsSNAP = 0;
-    QuantumshieldSNAP = 0;
-    CriticalchanceSNAP = 0;
-    CiriticalmultiSNAP = 0;
-    AttackspeedSNAP = 0;
-    HullprotectionSNAP = 100;
-    QuantumentanglementSNAP = 0;
-    AerodynamicsSNAP = 0;
-    LifeStealSNAP = 0;
-    CoolDownReductionSNAP = 0;
-    ManaCostReductionSNAP = 0;
-    AllattributesmodSNAP = 0;
-    HullProtectionmodSNAP = 0;
-    QuantumentanglementmodSNAP = 0;
-    AerodynamicsmodSNAP = 0;
-    PhysicallowSNAP = 0;
-    PhysicalhighSNAP = 0;
-    ElectriclowSNAP = 0;
-    ElectrichighSNAP = 0;
-    IcelowSNAP = 0;
-    IcehigSNAP = 0;
-    HeatlowSNAP = 0;
-    HeathighSNAP = 0;
-    RadiationlowSNAP = 0;
-    RadiationhighSNAP = 0;
+    StatList = ["Armorplating", "Aerodynamics", "Quantumshield", "Criticalchance", "Criticalmulti", 
+                "Attackspeed", "Hullprotection", "Quantumentanglement", "Aerodynamics", "LifeSteal", 
+                "CoolDownReduction", "ManaCostReduction", "Allattributesmod", "HullProtectionmod", 
+                "Quantumentanglementmod", "Aerodynamicsmod", "Physicallow", "Physicalhigh", "Electriclow", 
+                "Electrichigh", "Icelow", "Icehigh", "Heatlow", "Heathigh", "Radiationlow", "Radiationhigh"];
+                
+    StatArray = [];
     
         
 class MapTile:
@@ -93,6 +45,8 @@ class MapTile:
         for i in range(len(LiveMap.ItemsList)):
             print(LiveMap.ItemsList[i].Type);
         
+        
+    
 #"""Item Class"""    
 class Item:
     Type = "";
@@ -104,27 +58,13 @@ class Item:
     Suffix2 = "";
     Suffix3 = "";
     
+    #make a dynamic method
     def __init__(self, rand, LiveMap):
-#        """what kind of item is it"""
-        if rand == 1:
-            self.GenerateWeapon(LiveMap);
-        elif rand == 2:
-            self.GenerateSupport(LiveMap);
-        elif rand == 3:
-            self.GenerateBridge(LiveMap);
-        elif rand == 4:
-            self.GeneratePowerCore(LiveMap);
-        elif rand == 5:
-            self.GenerateLifeSupport(LiveMap);
-        elif rand == 6:
-            self.GenerateThruster(LiveMap);
-        elif rand == 7:
-            self.GenerateHullMaterial(LiveMap);
-        elif rand == 8:
-            self.GenerateAccessory(LiveMap);
-        elif rand == 9:
-            self.GenerateGem(LiveMap);
-
+#       
+        string = generators[(rand-1)];
+        
+        eval("self." + string + "(LiveMap)");
+        
     def GenerateWeapon(self, LiveMap):
         self.Type = "Weapon";
         
@@ -132,7 +72,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -166,7 +106,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -201,7 +141,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -235,7 +175,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -269,7 +209,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -303,7 +243,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -337,7 +277,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -371,7 +311,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
+        rarity = random.randrange(0,RarityDef); 
         
         if rarity == 2:
             print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
@@ -405,7 +345,7 @@ class Item:
         mods = 0;
         
 #        """rarity determines gem """
-        rarity = random.randrange(0,3);
+        rarity = random.randrange(0,RarityDef);
         
         if rarity == 2:
             print(Fore.MAGENTA + Style.BRIGHT + "Alpha Gem increasing tier of modifiers by 3");
@@ -430,13 +370,13 @@ class Item:
         LiveMap.ItemsList.append(self);
             
         print("\n");
-    
+  
 def GenerateMap(name):
     LiveMap = MapTile(name);
     return (LiveMap);
     
 def EnemyDies(LiveMap):
-    rand = random.randrange(1,10);
+    rand = random.randrange(1,(len(generators) + 1));
     NewItem = Item(rand, LiveMap);
     return (NewItem);
     
@@ -449,13 +389,15 @@ def UpdateCharacterStats():
         
 
  
-#def MakeFiftyItems():    
-#    numberofitems = 50;
-#    
-#    while numberofitems > 0:
-#        rand = random.randrange(1,5);
-#        GenerateItem(rand);
-#        numberofitems = numberofitems-1;
+def MakeFiftyItems(LiveMap):    
+    numberofitems = 50;
+    
+    while numberofitems > 0:
+        rand = random.randrange(1,(len(generators) + 1));
+        NewItem = Item(rand, LiveMap);
+        numberofitems = numberofitems-1;
+        
+    return(NewItem);
     
 #"""Main"""
 newitem = 0;
@@ -463,6 +405,9 @@ rand = 0;
 mods = 0;
 rarity = 0;
 name = "I am a new Map"
+generators = ["GenerateWeapon", "GenerateSupport", "GenerateBridge", "GeneratePowerCore", "GenerateLifeSupport", "GenerateThruster", "GenerateHullMaterial", 
+              "GenerateAccessory", "GenerateGem"]
+RarityDef = 3;
 
 print(Fore.WHITE + Style.BRIGHT + "rand is " + str(rand) + "\n");
 
