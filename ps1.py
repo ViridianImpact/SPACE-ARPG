@@ -13,282 +13,137 @@ pistol mods available:
     hull strength
     quantum entaglement
     life steal
-    reduced mana cost
-    
-"""
+    reduced mana cost"""
 import random
 from colorama import Fore, Style
 
 
 class CharacterBase:
-    Level = 1;
-    Class = "";
-    
-    """Character base stats"""
-    Armorplating = 0;
-    Aerodynamics = 0;
-    Quantumshield = 0;
-    Criticalchance = 0;
-    Ciriticalmulti = 0;
-    Attackspeed = 0;
-    Hullprotection = 100;
-    Quantumentanglement = 0;
-    Aerodynamics = 0;
-    LifeSteal = 0;
-    CoolDownReduction = 0;
-    ManaCostReduction = 0;
-    Allattributesmod = 0;
-    HullProtectionmod = 0;
-    Quantumentanglementmod = 0;
-    Aerodynamicsmod = 0;
-    Physicallow = 0;
-    Physicalhigh = 0;
-    Electriclow = 0;
-    Electrichigh = 0;
-    Icelow = 0;
-    Icehigh = 0;
-    Heatlow = 0;
-    Heathigh = 0;
-    Radiationlow = 0;
-    Radiationhigh = 0;
-    
-    """Sanpshot of characters stats"""
-    ArmorplatingSNAP = 0;
-    AerodynamicsSNAP = 0;
-    QuantumshieldSNAP = 0;
-    CriticalchanceSNAP = 0;
-    CiriticalmultiSNAP = 0;
-    AttackspeedSNAP = 0;
-    HullprotectionSNAP = 100;
-    QuantumentanglementSNAP = 0;
-    AerodynamicsSNAP = 0;
-    LifeStealSNAP = 0;
-    CoolDownReductionSNAP = 0;
-    ManaCostReductionSNAP = 0;
-    AllattributesmodSNAP = 0;
-    HullProtectionmodSNAP = 0;
-    QuantumentanglementmodSNAP = 0;
-    AerodynamicsmodSNAP = 0;
-    PhysicallowSNAP = 0;
-    PhysicalhighSNAP = 0;
-    ElectriclowSNAP = 0;
-    ElectrichighSNAP = 0;
-    IcelowSNAP = 0;
-    IcehigSNAP = 0;
-    HeatlowSNAP = 0;
-    HeathighSNAP = 0;
-    RadiationlowSNAP = 0;
-    RadiationhighSNAP = 0;
-    
-        
+    """define all parameters"""
+    Level = 1
+    Class = ""
+    StatList = ["Armorplating", "Aerodynamics", "Quantumshield", "Criticalchance",
+                "Criticalmulti", "Attackspeed", "Hullprotection",
+                "Quantumentanglement", "Aerodynamics", "LifeSteal",
+                "CoolDownReduction", "ManaCostReduction", "Allattributesmod",
+                "HullProtectionmod", "Quantumentanglementmod", "Aerodynamicsmod",
+                "Physicallow", "Physicalhigh", "Electriclow",
+                "Electrichigh", "Icelow", "Icehigh", "Heatlow", "Heathigh",
+                "Radiationlow", "Radiationhigh"]
+
+    StatArray = []
+
 class MapTile:
-    ItemsList = [];
-    name = "";
-    
-    def __init__(self, name):
-        self.name = name;
-        print("It's just stars all the way down");
-    
-    def PrintTypes(self, NewItem):        
-        for i in range(len(LiveMap.ItemsList)):
-            print(LiveMap.ItemsList[i].Type);
-        
-"""Item Class"""    
+    """define all parameters"""
+    ItemsList = []
+    name = ""
+
+    def __init__(self):
+        self.name = "This is a map"
+        print("It's just stars all the way down")
+
+    def print_types(self):
+        """print the types of each item on the map"""
+        for i in range(len(live_map.ItemsList)):
+            print(live_map.ItemsList[i].type)
+
 class Item:
-    Type = "";
-    Implicit = "";
-    Prefix1 = "";
-    Prefix2 = "";
-    Prefix3 = "";
-    Suffix1 = "";
-    Suffix2 = "";
-    Suffix3 = "";
-    
-    def __init__(self, rand, LiveMap):
-        """what kind of item is it"""
-        if rand == 1:
-            self.GeneratePistol(LiveMap);
-        elif rand == 2:
-            self.GenerateSMG(LiveMap);
-        elif rand == 3:
-            self.GenerateSniper(LiveMap);
-        elif rand == 4:
-            self.GenerateGem(LiveMap);
+    """define all parameters"""
+    type = ""
+    rarity_string = ""
+    Implicit = ""
+    Prefix1 = ""
+    Prefix2 = ""
+    Prefix3 = ""
+    Suffix1 = ""
+    Suffix2 = ""
+    Suffix3 = ""
 
-    def GeneratePistol(self, LiveMap):
-        self.Type = "Pistol";
-        
-        print(Fore.WHITE + Style.BRIGHT + "GeneratePistol is working!");
-        mods = 0;
-        
-        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
-        
-        if rarity == 2:
-            print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
-        elif rarity == 1:
-            print(Fore.GREEN + Style.BRIGHT + "Uncommon Item: Maximum 1 mod");
-        elif rarity == 0:
-            print(Fore.WHITE + Style.BRIGHT + "Common Item");
-        
-        """quantity of mods"""
-        if rarity > 0:
-            mods = random.randrange(1, rarity+1);
-            count = 1;
-            print("we have selected " + str(mods) + " mods");        
-        elif rarity == 0: 
-            print("no modifiers on common items");
-            
-            """generate modifiers"""
-        while (mods > 0):
-            print("generating mod " + str(count));
-            mods = mods - 1;
-            count = count + 1;
-            
-        LiveMap.ItemsList.append(self);
-            
-        print("\n");
-    
-    def GenerateSMG(self, LiveMap):
-        self.Type = "SMG";
-        
-        print(Fore.WHITE + "GenerateSMG is working!");
-        mods = 0;
-        
-        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
-        
-        if rarity == 2:
-            print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
-        elif rarity == 1:
-            print(Fore.GREEN + Style.BRIGHT + "Uncommon Item: Maximum 1 mod");
-        elif rarity == 0:
-            print(Fore.WHITE + Style.BRIGHT + "Common Item");
-            
-        """quantity of mods"""
-        if rarity > 0:
-            mods = random.randrange(1, rarity+1);
-            count = 1;
-            print("we have selected " + str(mods) + " mods");        
-        elif rarity == 0: 
-            print("no modifiers on common items");
-        
-        """generate modifiers"""
-        while (mods > 0):
-            print("generating mod " + str(count));
-            mods = mods - 1;
-            count = count + 1;
-            
-        LiveMap.ItemsList.append(self);
-            
-        print("\n");
-    
-    
-    def GenerateSniper(self, LiveMap):
-        self.Type = "Sniper";
-        
-        print(Fore.WHITE + Style.BRIGHT + "GenerateSniper is working!");
-        mods = 0;
-        
-        """rarity determines quantity of modifiers"""
-        rarity = random.randrange(0,3); 
-        
-        if rarity == 2:
-            print(Fore.RED + Style.BRIGHT + "Rare Item: Maximum 2 mods");
-        elif rarity == 1:
-            print(Fore.GREEN + Style.BRIGHT + "Uncommon Item: Maximum 1 mod");
-        elif rarity == 0:
-            print(Fore.WHITE + Style.BRIGHT + "Common Item");
-        
-        """quantity of mods"""
-        if rarity > 0:
-            mods = random.randrange(1, rarity+1);
-            count = 1;
-            print("we have selected " + str(mods) + " mods");        
-        elif rarity == 0: 
-            print("no modifiers on common items");
-        
-        """generate modifiers"""
-        while (mods > 0):
-            print("generating mod " + str(count));
-            mods = mods - 1;
-            count = count + 1;
-            
-        LiveMap.ItemsList.append(self);
-        
-        print("\n");
-        
-    def GenerateGem(self, LiveMap):
-        self.Type = "Gem";
-        
-        print(Fore.WHITE + Style.BRIGHT + "GenerateGem is working!");
-        mods = 0;
-        
-        """rarity determines gem """
-        rarity = random.randrange(0,3);
-        
-        if rarity == 2:
-            print(Fore.MAGENTA + Style.BRIGHT + "Alpha Gem increasing tier of modifiers by 3");
-        elif rarity == 1:
-            print(Fore.YELLOW + Style.BRIGHT + "Beta Gem increasing tier of modifiers by 1");
-        elif rarity == 0:
-            print(Fore.GREEN + Style.BRIGHT + "Gamma Gem increasing tier of modifiers by 1");
-            
-        """quantity of mods"""
-        if rarity > 0:
-            mods = 1;
-            count = 1;
-        elif rarity == 0: 
-            print("no modifiers on Gamma Gems");
-            
-        """Generate modifiers for Alpha and Beta gems"""
-        while (mods > 0):
-            print("generating mod " + str(count));
-            mods = mods - 1;
-            count = count + 1;
-            
-        LiveMap.ItemsList.append(self);
-            
-        print("\n");
-    
-def GenerateMap(name):
-    LiveMap = MapTile(name);
-    return (LiveMap);
-    
-def EnemyDies(LiveMap):
-    rand = random.randrange(1,5);
-    NewItem = Item(rand, LiveMap);
-    return (NewItem);
-    
-"""equiping or using an item"""
+    """initialize the item"""
+    def __init__(self, rand):
+        self.Rarity = self.Rarity()
+        self.Modifiers = self.Modifiers()
+        string = GENERATORS[(rand-1)]
+        print(string)
+        print("self.Generate(string)")
+        eval("self.Generate(string)")
+
+    def Generate(self, generator):
+        """define object details"""
+        self.type = generator
+        print(Fore.WHITE + Style.BRIGHT + "generate" + generator + " is working!")
+        self.rarity_string = self.Rarity.rarity_gen()
+        eval("self.Modifiers." + self.rarity_string + "(rarity)")
+        live_map.ItemsList.append(self)
+        print("\n")
+
+    class Rarity:
+        """list of rarities"""
+        rarityList = ["Common", "Uncommon", "Rare"]
+
+        def rarity_gen(self):
+            """identify rarity"""
+            temp = random.randrange(0, len(self.rarityList))
+            return self.rarityList[temp]
+
+    class Modifiers:
+        """define all parameters"""
+        ModPool = [""]
+        WeaponModPool = [""]
+        SupportModPool = [""]
+        BridgeModPool = [""]
+        PowerCoreModPool = [""]
+        LifeSupportModPool = [""]
+        HullMaterialModPool = [""]
+        ThrusteModPool = [""]
+        AccessoryModPool = [""]
+
+#       draw from 1 general mod and 2 type specific mods
+        def Rare(self, rarity):
+            """placeholder for pulling mods from mod lists"""
+            print("Generating 1 GenMod and 2 typeMods")
+
+#       draw from 1 general mod and 1 type specific mod
+        def Uncommon(self, rarity):
+            """placeholder for pulling mods from mod lists"""
+            print("Generating 1 GenMod and 1 typeMod")
+
+#       draw from 1 general mod
+        def Common(self, rarity):
+            """placeholder for pulling mods from mod lists"""
+            print("Generating 1 GenMod")
+
+def EnemyDies():
+    """loot drops from dead enemies"""
+    rand = random.randrange(1, (len(GENERATORS) + 1))
+#        will use in future updates
+#            player call for item stats for instance
+    Item(rand)
+
+#"""equiping or using an item"""
 def UpdateCharacterStats():
-    return(0);
+    """placeholder for checking effects placed on the player"""
 
+def MakeFiftyItems():
+    """number of items to print"""
+    numberofitems = 50
 
-    
-        
-
-"""  
-def MakeFiftyItems():    
-    numberofitems = 50;
-    
     while numberofitems > 0:
-        rand = random.randrange(1,5);
-        GenerateItem(rand);
-        numberofitems = numberofitems-1;"""
-    
-"""Main"""
-newitem = 0;
-rand = 0;
-mods = 0;
-rarity = 0;
-name = "I am a new Map"
+        rand = random.randrange(1, (len(GENERATORS) + 1))
+#        will use in future updates
+#            player call for item stats for instance
+        NewItem = Item(rand)
+        numberofitems = numberofitems-1
 
-print(Fore.WHITE + Style.BRIGHT + "rand is " + str(rand) + "\n");
+#"""Main"""
+RAND = 0
+live_map = 0
+GENERATORS = ["Weapon", "Support", "Bridge", "PowerCore", "LifeSupport", "Thruster", "HullMaterial",
+              "Accessory", "Gem"]
 
+print(Fore.WHITE + Style.BRIGHT + "RAND is " + str(RAND) + "\n")
 
-print(Fore.WHITE + Style.BRIGHT + "\n");
-LiveMap = GenerateMap(name);
-NewItem = EnemyDies(LiveMap);
-    
-print(Fore.WHITE + "End of runtime successful");
+print(Fore.WHITE + Style.BRIGHT + "\n")
+live_map = MapTile()
+
+print(Fore.WHITE + Style.BRIGHT + "End of runtime successful")
