@@ -19,6 +19,16 @@ import pygame
 pygame.init()
 from colorama import Fore, Style
 
+class Camera:
+    def __init__(self):
+        self.camera_x = player.x
+        self.camera_y = player.y
+        
+    def move_camera(self):
+        if self.camera_x != player.x or self.camera_y != player.y:
+            self.camera_x = player.x
+            self.camera_y = player.y
+
 class Player:
     def __init__(self):
         self.x = 100
@@ -26,22 +36,12 @@ class Player:
         self.vel = 5
         self.width = 40
         self.height = 60
+        pygame.Vector2()
 
-    def move_player(self, mouse_position):
-        x_final = mouse_position[0]
-        y_final = mouse_position[1]
+    def move_player(self, x_final, y_final):
         distance = ((self.x - x_final)** 2 + (self.y - y_final)** 2)** 0.5
-        walk = True
-
-        while walk:
-            self.x = self.x + (self.vel / distance)*(x_final - self.x)
-            self.y = self.y + (self.vel / distance)*(y_final - self.y)
-
-            pygame.draw.rect(active_window, (255, 0, 0), (player.x, player.y, player.width, player.height))
-
-            if self.x < (x_final + 1) and self.x > (x_final - 1):
-                if self.y > (y_final - 1) and self.y < (y_final + 1):
-                    walk = False
+        self.x = self.x + (self.vel / distance)*(x_final - self.x)
+        self.y = self.y + (self.vel / distance)*(y_final - self.y)
 
 class CharacterBase:
     """define all parameters"""
@@ -166,6 +166,10 @@ live_map = 0
 GENERATORS = ["Weapon", "Support", "Bridge", "PowerCore", "LifeSupport", "Thruster", "HullMaterial",
               "Accessory", "Gem"]
 player = Player()
+clock = pygame.time.Clock()
+x_final = 99
+y_final = 99
+camera = Camera()
 
 print(Fore.WHITE + Style.BRIGHT + "RAND is " + str(RAND) + "\n")
 
@@ -174,22 +178,36 @@ live_map = MapTile()
 
 active_window = pygame.display.set_mode((1840, 990))
 pygame.display.set_caption("My Game")
+pygame.draw.rect(active_window, (255, 0, 0), (player.x, player.y, player.width, player.height))
+
+background = pygame.Surface((32, 32))
+background.convert()
 
 
 run = True
 
 while run:
-    pygame.time.delay(10)
+    clock.tick(60)
+
+    print("is my clock working?")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+    
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_position = pygame.mouse.get_pos()
-            player.move_player(mouse_position)
+            x_final = mouse_position[0] - 20
+            y_final = mouse_position[1] - 60
+    
+    if player.x > (x_final + 1) or player.x < (x_final - 1):  
+        player.move_player(x_final, y_final)
+
+    if player.y > (y_final - 1) or player.y < (y_final + 1):
+        player.move_player(x_final, y_final)
 
     pygame.draw.rect(active_window, (255, 0, 0), (player.x, player.y, player.width, player.height))
-
+    camera.move_camera()
     pygame.display.update()
 
 pygame.quit()
