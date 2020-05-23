@@ -1,4 +1,8 @@
-# -*- coding: utf-8 -*-
+# recent updates:
+#correct syntax for using Surfaces and rects appropriately for our player
+#havent oriented the camera correctly i belive the movement is all working 
+#but the player is locked in the top left so i cant see the movement effect
+#i.e. we can only go right or down
 """
 Spyder Editor
 
@@ -14,34 +18,45 @@ pistol mods available:
     quantum entaglement
     life steal
     reduced mana cost"""
-import random
-import pygame
-pygame.init()
 from colorama import Fore, Style
+import random, pygame
+pygame.init()
 
 class Camera:
-    def __init__(self):
-        self.camera_x = player.x
-        self.camera_y = player.y
-        
-    def move_camera(self):
-        if self.camera_x != player.x or self.camera_y != player.y:
-            self.camera_x = player.x
-            self.camera_y = player.y
+    """initialize the camera position"""
+    def __init__(self, width, height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+
+    def apply(self, entity):
+        return entity.rect.move(self.camera.topleft)
+
+    def update(self, target):
+        x = -target.rect.x + int(WIDTH / 2)
+        y = -target.rect.y + int(HEIGHT / 2)
+        self.camera = pygame.Rect(x, y, self.width, self.height)
 
 class Player:
+    """initialize the player for rendering"""
     def __init__(self):
         self.x = 100
         self.y = 100
         self.vel = 5
         self.width = 40
         self.height = 60
+        self.sprite = r"C:\Users\VIRID\Desktop\Sprites\Red_Player_RECT.png"
+        self.rect = 0
         pygame.Vector2()
-
+    """move player to mouse click coordinates"""
     def move_player(self, x_final, y_final):
-        distance = ((self.x - x_final)** 2 + (self.y - y_final)** 2)** 0.5
-        self.x = self.x + (self.vel / distance)*(x_final - self.x)
-        self.y = self.y + (self.vel / distance)*(y_final - self.y)
+        distance = int(((self.x - x_final)** 2 + (self.y - y_final)** 2)** 0.5)
+
+        if distance:
+            self.x = self.x + (self.vel / distance)*(x_final - self.x)
+            self.y = self.y + (self.vel / distance)*(y_final - self.y)
+        else:
+            return
 
 class CharacterBase:
     """define all parameters"""
@@ -70,7 +85,7 @@ class MapTile:
     def print_types(self):
         """print the types of each item on the map"""
         for i in range(len(live_map.ItemsList)):
-            print(live_map.ItemsList[i].type)        
+            print(live_map.ItemsList[i].type)
 
 class Item:
     """define all parameters"""
@@ -157,57 +172,53 @@ def MakeFiftyItems():
         rand = random.randrange(1, (len(GENERATORS) + 1))
 #        will use in future updates
 #            player call for item stats for instance
-        NewItem = Item(rand)
+        Item(rand)
         numberofitems = numberofitems-1
 
 #"""Main"""
-RAND = 0
-live_map = 0
 GENERATORS = ["Weapon", "Support", "Bridge", "PowerCore", "LifeSupport", "Thruster", "HullMaterial",
               "Accessory", "Gem"]
+RAND = 0
+live_map = 0
 player = Player()
 clock = pygame.time.Clock()
-x_final = 99
-y_final = 99
-camera = Camera()
+x_final = 100
+y_final = 100
+SIZE = WIDTH, HEIGHT = 1280, 720
+camera = Camera(WIDTH, HEIGHT)
 
 print(Fore.WHITE + Style.BRIGHT + "RAND is " + str(RAND) + "\n")
 
 print(Fore.WHITE + Style.BRIGHT + "\n")
 live_map = MapTile()
 
-active_window = pygame.display.set_mode((1840, 990))
+active_window = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("My Game")
-pygame.draw.rect(active_window, (255, 0, 0), (player.x, player.y, player.width, player.height))
 
-background = pygame.Surface((32, 32))
-background.convert()
+
+player.image = pygame.image.load(player.sprite).convert()
+player.rect = player.image.get_rect()
 
 
 run = True
 
 while run:
-    clock.tick(60)
-
-    print("is my clock working?")
+    clock.tick(144)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_position = pygame.mouse.get_pos()
             x_final = mouse_position[0] - 20
             y_final = mouse_position[1] - 60
+
+    player.move_player(x_final, y_final)
     
-    if player.x > (x_final + 1) or player.x < (x_final - 1):  
-        player.move_player(x_final, y_final)
-
-    if player.y > (y_final - 1) or player.y < (y_final + 1):
-        player.move_player(x_final, y_final)
-
-    pygame.draw.rect(active_window, (255, 0, 0), (player.x, player.y, player.width, player.height))
-    camera.move_camera()
+    
+    active_window.blit(player.image, player.rect) 
+    camera.update(player)
     pygame.display.update()
 
 pygame.quit()
