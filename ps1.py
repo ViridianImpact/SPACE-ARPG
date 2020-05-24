@@ -33,20 +33,20 @@ class Camera:
         return entity.rect.move(self.camera.topleft)
 
     def update(self, target):
-        x = -target.rect.x + int(WIDTH / 2)
-        y = -target.rect.y + int(HEIGHT / 2)
-        self.camera = pygame.Rect(x, y, self.width, self.height)
+        self.x = -target.x + int(WIDTH / 2)
+        self.y = -target.y + int(HEIGHT / 2)
+        self.camera = pygame.Rect(self.x, self.y, self.width, self.height)
 
 class Player:
     """initialize the player for rendering"""
     def __init__(self):
+        self.rect = 0
         self.x = 100
         self.y = 100
         self.vel = 5
         self.width = 40
         self.height = 60
-        self.sprite = r"C:\Users\VIRID\Desktop\Sprites\Red_Player_RECT.png"
-        self.rect = 0
+        self.sprite = r"Sprites\Red_Player_RECT.png"
         pygame.Vector2()
     """move player to mouse click coordinates"""
     def move_player(self, x_final, y_final):
@@ -55,6 +55,7 @@ class Player:
         if distance:
             self.x = self.x + (self.vel / distance)*(x_final - self.x)
             self.y = self.y + (self.vel / distance)*(y_final - self.y)
+            print("player x:" + str(self.x))
         else:
             return
 
@@ -213,6 +214,7 @@ while run:
             mouse_position = pygame.mouse.get_pos()
             x_final = mouse_position[0] - 20
             y_final = mouse_position[1] - 60
+            print("x:" + str(x_final))
 
     player.move_player(x_final, y_final)
     
