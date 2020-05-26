@@ -25,7 +25,7 @@ pygame.init()
 class Camera:
     """initialize the camera position"""
     def __init__(self, width, height):
-        self.camera = pygame.Rect(0, 0, width, height)
+        self.camera = pygame.Rect(100, 100, width, height)
         self.width = width
         self.height = height
 
@@ -58,6 +58,25 @@ class Player:
             print("player x:" + str(self.x))
         else:
             return
+        
+class Enemy:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.vel = 2
+        self.sprite = r"Sprites\Blue_Enemy_RECT.png"
+        
+    def move_enemy(self):
+        dist = 0
+        
+        if dist < 50:
+            self.x = self.x - self.vel
+            dist = dist + 5
+            
+        elif dist > 50:
+            self.x = self.x + self.vel
+            dist = dist - 5
+        
 
 class CharacterBase:
     """define all parameters"""
@@ -182,10 +201,13 @@ GENERATORS = ["Weapon", "Support", "Bridge", "PowerCore", "LifeSupport", "Thrust
 RAND = 0
 live_map = 0
 player = Player()
-clock = pygame.time.Clock()
+enemy = Enemy()
 x_final = 100
 y_final = 100
 SIZE = WIDTH, HEIGHT = 1280, 720
+CENTERWIDTH = WIDTH / 2
+CENTERHEIGHT = HEIGHT / 2
+clock = pygame.time.Clock()
 camera = Camera(WIDTH, HEIGHT)
 
 print(Fore.WHITE + Style.BRIGHT + "RAND is " + str(RAND) + "\n")
@@ -199,6 +221,11 @@ pygame.display.set_caption("My Game")
 
 player.image = pygame.image.load(player.sprite).convert()
 player.rect = player.image.get_rect()
+player.rect.center = (CENTERWIDTH, CENTERHEIGHT)
+
+enemy.image = pygame.image.load(enemy.sprite).convert()
+enemy.rect = player.image.get_rect()
+enemy.rect.center = (0, 0)
 
 
 run = True
@@ -215,11 +242,15 @@ while run:
             x_final = mouse_position[0] - 20
             y_final = mouse_position[1] - 60
             print("x:" + str(x_final))
+            print(Fore.GREEN + Style.BRIGHT + "enemy:" + str(enemy.x))
+            print(Fore.WHITE + "/n")
 
     player.move_player(x_final, y_final)
+    enemy.move_enemy()
     
     
     active_window.blit(player.image, player.rect) 
+    active_window.blit(enemy.image, enemy.rect)
     camera.update(player)
     pygame.display.update()
 
