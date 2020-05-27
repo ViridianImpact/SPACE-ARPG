@@ -1,8 +1,9 @@
 # recent updates:
-#correct syntax for using Surfaces and rects appropriately for our player
-#havent oriented the camera correctly i belive the movement is all working 
-#but the player is locked in the top left so i cant see the movement effect
-#i.e. we can only go right or down
+# camera updates recording camera/entity positon separate from map/entity position aside from the player
+# enemy visuals arent synching properly to player movement
+# enemy is walking back and forth left and right from 25 pixels to 500 pixels at a rate of 5 pixels per second
+# tested the theory for using a list of changed items and updating the positions of only those 
+# scrubbing the older images with that space of background
 """
 Spyder Editor
 
@@ -52,30 +53,43 @@ class Player:
     def move_player(self, x_final, y_final):
         distance = int(((self.x - x_final)** 2 + (self.y - y_final)** 2)** 0.5)
 
-        if distance:
-            self.x = self.x + (self.vel / distance)*(x_final - self.x)
-            self.y = self.y + (self.vel / distance)*(y_final - self.y)
-            print("player x:" + str(self.x))
+        if distance > 5:
+            camera_move_x = int((self.vel / distance)*(x_final - self.x))
+            camera_move_y = int((self.vel / distance)*(y_final - self.y))
+            self.x = self.x + camera_move_x
+            self.y = self.y + camera_move_y
+            print(Fore.RED + "Player x: " + str(self.x))
+            enemy.cam_x = enemy.cam_x - camera_move_x
+            enemy.cam_y = enemy.cam_y - camera_move_y
+            print(Fore.MAGENTA + "Enemy cam_x: " + str(enemy.cam_x))
         else:
             return
         
 class Enemy:
     def __init__(self):
-        self.x = 0
-        self.y = 0
+        self.x = 50
+        self.y = 100
+        self.cam_x = 50
+        self.cam_y = 100
         self.vel = 2
+        self.dist = 1
         self.sprite = r"Sprites\Blue_Enemy_RECT.png"
+        self.rect = 0
         
     def move_enemy(self):
-        dist = 0
-        
-        if dist < 50:
-            self.x = self.x - self.vel
-            dist = dist + 5
-            
-        elif dist > 50:
+        if self.dist:
             self.x = self.x + self.vel
-            dist = dist - 5
+            self.cam_x = self.cam_x + self.vel
+            print(Fore.BLUE + "Enemy: " + str(self.x))
+            if self.x > 500:
+                self.dist = 0
+            
+        else:
+            self.x = self.x - self.vel
+            self.cam_x = self.cam_x - self.vel
+            print(Fore.CYAN + "Enemy: " + str(self.x))
+            if self.x < 20:
+                self.dist = 1
         
 
 class CharacterBase:
@@ -95,11 +109,13 @@ class CharacterBase:
 
 class MapTile:
     """define all parameters"""
-    ItemsList = []
-    name = ""
 
     def __init__(self):
+        self.ItemsList = []
+        self.name = ""
+        self.sprite = r"Sprites\Background_RECT.png"
         self.name = "This is a map"
+        self.rect = 0
         print("It's just stars all the way down")
 
     def print_types(self):
@@ -209,6 +225,7 @@ CENTERWIDTH = WIDTH / 2
 CENTERHEIGHT = HEIGHT / 2
 clock = pygame.time.Clock()
 camera = Camera(WIDTH, HEIGHT)
+pause = False
 
 print(Fore.WHITE + Style.BRIGHT + "RAND is " + str(RAND) + "\n")
 
@@ -218,6 +235,9 @@ live_map = MapTile()
 active_window = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("My Game")
 
+#live_map.image = pygame.image.load(live_map.sprite).convert()
+#live_map.rect = live_map.image.get_rect()
+#live_map.rect.topleft = (0, 0)
 
 player.image = pygame.image.load(player.sprite).convert()
 player.rect = player.image.get_rect()
@@ -225,8 +245,7 @@ player.rect.center = (CENTERWIDTH, CENTERHEIGHT)
 
 enemy.image = pygame.image.load(enemy.sprite).convert()
 enemy.rect = player.image.get_rect()
-enemy.rect.center = (0, 0)
-
+enemy.rect.center = (50, 100)
 
 run = True
 
@@ -243,17 +262,18 @@ while run:
             y_final = mouse_position[1] - 60
             print("x:" + str(x_final))
             print(Fore.GREEN + Style.BRIGHT + "enemy:" + str(enemy.x))
-            print(Fore.WHITE + "/n")
+            print(Fore.WHITE + "/n")            
 
     player.move_player(x_final, y_final)
     enemy.move_enemy()
-    
-    
+
+    enemy.rect.midbottom = (enemy.cam_x, enemy.cam_y)
+
     active_window.blit(player.image, player.rect) 
     active_window.blit(enemy.image, enemy.rect)
+#    active_window.blit(live_map.image, live_map.rect)
     camera.update(player)
     pygame.display.update()
 
 pygame.quit()
-
 print(Fore.WHITE + Style.BRIGHT + "End of runtime successful")
