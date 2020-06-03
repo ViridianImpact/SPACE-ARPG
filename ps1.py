@@ -35,17 +35,22 @@ class Camera:
         """start the game off with no offset this will change when player moves"""
         self.offset_x = 0
         self.offset_y = 0
-
+        """identify the map coordinates for the edge of the screen, this helps shorten the render loop"""
+        self.top_left = [(player.x - (WIDTH / 2)), (player.y + (HEIGHT / 2))]
+        
     def update(self, player):
         """set the x and y position for the camera based on player position"""
         self.x = -player.x + int(WIDTH / 2)
         self.y = -player.y + int(HEIGHT / 2)
         """moving the camera using new coordinates"""
         self.camera = pygame.Rect(self.x, self.y, self.width, self.height)
+        """recheck screen loaction on map"""
+        self.top_left = [(player.x - (WIDTH / 2)), (player.y + (HEIGHT / 2))]
 
 class Player:
     """initialize the player"""
     def __init__(self):
+        self.name = "player"
         self.rect = 0
         """position in center screen"""
 #        change to dynamic screen size later
@@ -58,45 +63,51 @@ class Player:
         """sprite image location"""
         self.sprite = r"Sprites\Red_Player_RECT.png"
         
-    """move player to mouse click coordinates"""
-    def move_player(self, x_final, y_final):
-        """calculate distance to identify how far to run"""
-        distance = int(((self.x - x_final)** 2 + (self.y - y_final)** 2)** 0.5)
+        self.display = Display.__init__(self)
 
-        """stop when close enough (pixels)"""
-        if distance > 15:
-            """set x and y distance for each frame of movement based on the speed of the character"""
-            """the ratio of the distance over the speed gives us the lengths of the rise and the run for the frame"""
-            move_x = int((distance / self.speed) * (x_final - self.x))
-            move_y = int((distance / self.speed) * (y_final - self.y))
-            """change the player position accordingly"""
-            self.x = self.x + move_x
-            self.y = self.y + move_y
-            print(Fore.RED + "Player y: " + str(self.y))
-            """increment the offsets by the distance traveled"""
-            camera.offset_x = camera.offset_x - move_x
-            camera.offset_y = camera.offset_x - move_y
-            """move enemy visual coordinates (did not move the base x and y values)"""
-            enemy.cam_x = enemy.cam_x - move_x
-            enemy.cam_y = enemy.cam_y - move_y
-            print(Fore.MAGENTA + "Enemy cam_y: " + str(enemy.cam_y))
+    def move_player(self, x_final, y_final):
+
+        x_delta = int(x_final - self.x)
+        y_delta = int(y_final - self.y)
+
+        if x_delta | y_delta:
+            #print(x_delta, " ", y_delta)
+            x_step = self.speed
+            y_step = self.speed
+           
+            if x_final <  self.x:
+                x_step = -x_step
+           
+            if y_final < self.y:
+                y_step = -y_step
+           
+            if abs(x_delta) < self.speed:
+                self.x = x_final
+            else:
+                self.x = self.x + x_step
+           
+            if abs(y_delta) < self.speed:
+                self.y = y_final
+            else:
+                self.y = self.y + y_step
+            print(x_final, " ", y_final)
+            print(self.x, " ",x_step, " ",self.y, " ", y_step)
         else:
-            print(Fore.GREEN + "Player didn't move")
             return
         
 class Enemy:
     def __init__(self):
-        """first position for enemy"""
+        self.name = "enemy"
+        """first position for new enemy (will be dynamic later)"""
         self.x = 50
         self.y = 100
-        """matching screen position"""
-        self.cam_x = 50
-        self.cam_y = 100
         """speed"""
         self.speed = 2
         self.dist = 1
         self.sprite = r"Sprites\Blue_Enemy_RECT.png"
         self.rect = 0
+        """initialize display class for proper rendering"""
+        self.display = Display.__init__(self)
         
     def move_enemy(self):
         """just a simple back and forth movement script"""
@@ -222,6 +233,19 @@ class Item:
         def Common(self, rarity):
             """placeholder for pulling mods from mod lists"""
             print("Generating 1 GenMod")
+            
+class Display:
+    def __init__(self):
+        self.coor = [self.x, self.y]
+        self.render = 0
+        
+    def adjust_display(self, object_list):
+        for target in object_list:
+            target.coor = [(target.x - camera.offset_x), (target.y - camera.offset_y)]
+            
+            if target.screen_xy[0] > camera.top_left[0] and target.screen_xy[0] < (camera.top_left[0] + WIDTH):
+                if target.screen_xy[1] < camera.top_left[1] and target.screen_xy > (camera.top_left[1] - HEIGHT):
+                    target.render = 1
 
 def EnemyDies():
     """loot drops from dead enemies"""
@@ -249,12 +273,13 @@ live_map = 0
 SIZE = WIDTH, HEIGHT = 1280, 720
 CENTERWIDTH = WIDTH / 2
 CENTERHEIGHT = HEIGHT / 2
-clock = pygame.time.Clock()
-camera = Camera(WIDTH, HEIGHT)
 x_final = CENTERWIDTH
 y_final = CENTERHEIGHT
+clock = pygame.time.Clock()
 player = Player()
 enemy = Enemy()
+camera = Camera(WIDTH, HEIGHT)
+render_list = [player, enemy]
 
 print(Fore.WHITE + Style.BRIGHT + "RAND is " + str(RAND) + "\n")
 
@@ -308,12 +333,17 @@ while run:
     """move enemy"""
 #    enemy.move_enemy()
     """position enemy rect"""
-    enemy.rect.midbottom = (enemy.cam_x, enemy.cam_y)
+    count = 0
+    for target in render_list:
+        eval(render_list[count].name + ".display.adjust_display(render_list)")
+        count = count + 1
 
     """blit everything"""
     active_window.blit(player.image, player.rect) 
     active_window.blit(enemy.image, enemy.rect)
 #    active_window.blit(live_map.image, live_map.rect)
+    
+    
     camera.update(player)
     pygame.display.update()
 
